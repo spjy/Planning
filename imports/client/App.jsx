@@ -8,8 +8,9 @@ class App extends Component {
    render() {
       return (
          <div className="app ui container">
-            <Form />
-               {this.props.meetup.map((meetup) => {
+           <Form />
+           {/* Iterate through meetups from db */}
+           {this.props.meetup.map((meetup) => {
                   return (
                      <Data meetup={meetup} key={meetup._id} />
                   );
@@ -19,6 +20,7 @@ class App extends Component {
    }
 }
 
+// Get data from meetup database
 export default createContainer(() => {
    return {
       meetup: Meetups.find({}).fetch()
