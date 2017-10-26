@@ -4,12 +4,13 @@ import { Meetups } from '../api/meetups.js';
 
 export default class Data extends Component {
    componentDidMount() {
-      // initialize popup
+      // initialize popup of SUI
       $('.attendeesList').popup({
          on: 'click'
       });
    }
    deleteMeetup(e) {
+     // Stop page reload
       e.preventDefault();
 
       // remove meetup if it matches user's ID
@@ -18,11 +19,15 @@ export default class Data extends Component {
       }
    }
    attendMeetup(e) {
+     // Stop page reload
       e.preventDefault();
 
+      // Get data of the meetup and check if user
       const attendees = Meetups.findOne(this.props.meetup._id).attendees;
       const user = Meteor.users.findOne(Meteor.userId()).username;
 
+      // If the meetup contains user, add to the attending list,
+      // otherwise if they are attending, remove them from the attending list
       if (!attendees.includes(user)) {
          Meetups.update(this.props.meetup._id, {
             $push: {
@@ -38,13 +43,15 @@ export default class Data extends Component {
       }
    }
    render() {
-      const attendingCheckmark = this.props.meetup.attendees.includes(Meteor.users.findOne(Meteor.userId()).username) ? 'check icon green text' : 'check icon';
-      const attendingText = this.props.meetup.attendees.includes(Meteor.users.findOne(Meteor.userId()).username) ? 'You are attending' : 'Attend';
-      const attendingFirstUser = this.props.meetup.attendees[0];
-      const attendingUsersCount = this.props.meetup.attendees.length - 1;
-      const timeUntilEvent = moment(this.props.meetup.date + this.props.meetup.time, 'MM/DD/YY hh:mm a').fromNow();
+     // Initialize helpers
+      const attendingCheckmark = this.props.meetup.attendees.includes(Meteor.users.findOne(Meteor.userId()).username) ? 'check icon green text' : 'check icon'; // Display icon if attending
+      const attendingText = this.props.meetup.attendees.includes(Meteor.users.findOne(Meteor.userId()).username) ? 'You are attending' : 'Attend'; // Display text if the person is attending
+      const attendingFirstUser = this.props.meetup.attendees[0]; // Display first user in database
+      const attendingUsersCount = this.props.meetup.attendees.length - 1; // Count of users
+      const timeUntilEvent = moment(this.props.meetup.date + this.props.meetup.time, 'MM/DD/YY hh:mm a').fromNow(); // Time till event
       let attendingUsersDisplay;
 
+      // Display certain text depending on the number of people attending
       if (attendingUsersCount === 1) {
          attendingUsersDisplay = 'and ' + attendingUsersCount + ' other';
       } else if (attendingUsersCount > 1) {
